@@ -16,6 +16,45 @@ var logger = Logger(
   ),
 );
 
+class FavoriteService extends ChangeNotifier {
+  List<Book> _favoriteBooks = [];
+
+  List<Book> get favoriteBooks => _favoriteBooks;
+
+  FavoriteService() {
+    _loadFavorites();
+  }
+
+  Future<void> _loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final favoriteJsonList = prefs.getStringList('favoriteBooks') ?? [];
+    _favoriteBooks = favoriteJsonList.map((jsonString) {
+      try {
+        return Book.fromJson(json.decode(jsonString) as Map<String, dynamic>);
+      } catch (e) {
+        logger.e('Error decoding favorite book JSON: $e, JSON: $jsonString');
+        return null; // Handle error gracefully
+      }
+    }).whereType<Book>().toList(); // Filter out nulls
+    notifyListeners(); // Notify listeners after loading
+  }
+
+  Future<void> toggleFavorite(Book book) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_favoriteBooks.any((favBook) => favBook.id == book.id)) {
+      _favoriteBooks.removeWhere((favBook) => favBook.id == book.id);
+    } else {
+      _favoriteBooks.add(book);
+    }
+    final favoriteJsonList = _favoriteBooks.map((book) => json.encode(book.toJson())).toList();
+    await prefs.setStringList('favoriteBooks', favoriteJsonList);
+    notifyListeners(); // Notify listeners of the change
+  }
+
+  bool isBookFavorite(String bookId) {
+    return _favoriteBooks.any((book) => book.id == bookId);
+  }
+}
 
 class BookDetailPage extends StatefulWidget {
   final Book book;
