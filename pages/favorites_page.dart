@@ -23,6 +23,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Future<void> _loadFavorites() async {
+    setState(() {
+      _isLoading = true; // Show loading indicator while reloading
+    });
     try {
       final prefs = await SharedPreferences.getInstance();
       final favoriteJsonList = prefs.getStringList('favoriteBooks') ?? [];
@@ -90,14 +93,20 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     final book = _favoriteBooks[index];
                     return BookCard(
                       book: book,
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        // Await the push to ensure the detail page is popped before reloading
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => BookDetailPage(book: book),
+                            builder: (context) => BookDetailPage(
+                              book: book,
+                              onFavoriteToggle: _loadFavorites, // Pass the callback
+                            ),
                           ),
                         );
+                        _loadFavorites(); // Reload when returning from detail page
                       },
+                      onFavoriteToggle: _loadFavorites, // Pass the callback
                     );
                   },
                 ),
