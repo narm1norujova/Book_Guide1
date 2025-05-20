@@ -77,6 +77,7 @@ class _BookCardState extends State<BookCard> {
       isFavorite = !isFavorite;
     });
 
+    // This line is crucial for notifying the parent widget
     widget.onFavoriteToggle?.call();
   }
 
@@ -91,8 +92,8 @@ class _BookCardState extends State<BookCard> {
         child: Card(
           elevation: 4.0,
           margin: widget.isListView
-              ? const EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0)
-              : const EdgeInsets.all(6.0),
+            ? const EdgeInsets.symmetric(vertical: 6.0, horizontal: 50.0)
+            : const EdgeInsets.all(6.0),
           clipBehavior: Clip.antiAlias,
           color: Colors.white.withAlpha((0.2 * 255).round()),
           child: InkWell(
@@ -117,8 +118,8 @@ class _BookCardState extends State<BookCard> {
               borderRadius: BorderRadius.circular(8.0),
               child: Image.network(
                 widget.book.coverImageUrl,
-                height: 170,
-                width: 120,
+                height: 200,
+                width: 150,
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
