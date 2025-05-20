@@ -85,18 +85,4 @@ Defines:
   - Fields: `id`, `title`, `author`, `year`, `genre`, `coverImageUrl`, `tagline`, `previewLink`
   - JSON serialization methods for storage and parsing
 
----
 
-## ▶️ How to Run
-
-Open terminal and follow the steps below:
-
-```bash
-# Check if Flutter is set up
-flutter doctor
-
-# Connect your device or emulator
-flutter devices
-
-# Run the app
-flutter run
